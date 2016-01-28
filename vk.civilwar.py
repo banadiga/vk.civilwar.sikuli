@@ -77,7 +77,7 @@ def sentpresents(args):
 def get_parser():
     parser = argparse.ArgumentParser(description='Automation of the game `vk.civilwar`', epilog=(
     'Home page: <https://github.com/banadiga/vk.civilwar.sikuli/>\n'
-    'Documentation pade: <https://github.com/banadiga/vk.civilwar.sikuli/README.md>\n'
+    'Documentation pade: <https://github.com/banadiga/vk.civilwar.sikuli/blob/master/README.md>\n'
     'Report bugs to <banadiga@users.noreply.github.com> or <https://github.com/banadiga/vk.civilwar.sikuli/issues>\n'
     ), formatter_class=RawTextHelpFormatter)
     subparsers = parser.add_subparsers(dest='run', help='Sub command help:')

@@ -1,20 +1,26 @@
-Name
+Automation of the game `vk.civilwar`
 ====
 
 Functionality
 ----
+* [x] Buy items in shop
+* [ ] Sent presents to fiends.
+
 
 Install
 ----
 
-### Install java
-How to [Install java]()
+* Install java
 
-### Install sikuli
-How to [Install sikuli]()
+How to [Install java](https://www.java.com/en/download/help/download_options.xml)
 
-### Install vk.civilwar.skl
-Just download [vk.civilwar.skl 2.1]()
+* Install sikuli
+
+How to [Install sikuli](http://www.sikulix.com/)
+
+* Install vk.civilwar.skl
+
+Just download [vk.civilwar.skl v2.1](https://github.com/banadiga/vk.civilwar.sikuli/releases/tag/v2.1)
 
 Run
 ----
@@ -26,13 +32,11 @@ java -jar <PATH_TO_SIKULIX>/sikulix.jar -r <PATH_TO_SKL>/vk.civilwar.skl --args 
 Help
 ----
 
-### About program
+* About program
 
 ```bash
-java -jar ~/Applications/sikulix/sikulix.jar -r vk.civilwar.skl --args  -h
-```
+$> java -jar ~/Applications/sikulix/sikulix.jar -r vk.civilwar.skl --args  -h
 
-```
 usage: vk.civilwar.sikuli [-h] [--version] [-v] [-d]
                           {sent-presents,buy-items} ...
 
@@ -51,17 +55,16 @@ optional arguments:
   -d, --debug           print lots of debugging statements.
 
 Home page: <https://github.com/banadiga/vk.civilwar.sikuli/>
-Documentation pade: <https://github.com/banadiga/vk.civilwar.sikuli/README.md>
+Documentation pade: <https://github.com/banadiga/vk.civilwar.sikuli/blob/master/README.md>
 Report bugs to <banadiga@users.noreply.github.com> or <https://github.com/banadiga/vk.civilwar.sikuli/issues>
 
 ```
 
-### About `buy-items`
-```bash
-java -jar ~/Applications/sikulix/sikulix.jar -r vk.civilwar.skl --args  buy-items -h
-```
+* About `buy-items`
 
-```
+```bash
+$> java -jar ~/Applications/sikulix/sikulix.jar -r vk.civilwar.skl --args  buy-items -h
+
 usage: vk.civilwar.sikuli buy-items [-h] [-c COUNT] [-l {0,1,2,3,4,5}]
 
 optional arguments:
