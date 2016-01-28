@@ -1,0 +1,191 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>vk.civilwar.sikuli</h2> <a href="vk.civilwar.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="kw">import</span> argparse
+<span class="kw">from</span> argparse <span class="kw">import</span> RawTextHelpFormatter
+<span class="kw">import</span> logging
+
+SLEEP_ON_LOAD = <span class="dig">1</span>
+LONG_SLEEP = <span class="dig">10</span>
+SLEEP_ON_BUY = <span class="dig">1</span>
+
+LIST_OF_DONE_ITEM = [
+<img src="done_11.png" />, <img src="done_21.png" />, <img src="done_31.png" />, <img src="done_41.png" />, <img src="done_15.png" />,
+<img src="done_12.png" />, <img src="done_22.png" />, <img src="done_32.png" />, <img src="done_42.png" />, <img src="done_25.png" />,
+<img src="done_13.png" />, <img src="done_23.png" />, <img src="done_33.png" />, <img src="done_43.png" />, <img src="done_35.png" />,
+<img src="done_14.png" />, <img src="done_24.png" />, <img src="done_34.png" />, <img src="done_44.png" />, <img src="done_45.png" />,
+]
+
+LIST_OF_NEXT = [
+[ <img src="item_11.png" />, <img src="item_21.png" />, <img src="item_31.png" />, <img src="item_41.png" />, <img src="item_15.png" />],
+[ <img src="item_12.png" />, <img src="item_22.png" />, <img src="item_32.png" />, <img src="item_42.png" />, <img src="item_25.png" />],
+[ <img src="item_13.png" />, <img src="item_23.png" />, <img src="item_33.png" />, <img src="item_43.png" />, <img src="item_35.png" />],
+[ <img src="item_14.png" />, <img src="item_24.png" />, <img src="item_34.png" />, <img src="item_44.png" />, <img src="item_45.png" />],
+]
+
+<span class="kw">def</span> get_sleep_time(level):
+    <span class="kw">return</span> SLEEP_ON_LOAD + LONG_SLEEP * level + SLEEP_ON_BUY * level
+
+<span class="kw">def</span> check_is_item_redy() :
+    <span class="kw">for</span> i, v <span class="kw">in</span> enumerate(LIST_OF_DONE_ITEM):
+        top = exists(v)
+        <span class="kw">if</span> top:
+            <span class="kw">print</span> top
+            <span class="kw">return</span> top
+
+<span class="kw">def</span> get_netx_item(level):
+    <span class="kw">for</span> j, q <span class="kw">in</span> enumerate(LIST_OF_NEXT[level]):
+        next_item = exists(q)
+        <span class="kw">if</span> next_item:
+            <span class="kw">print</span> next_item
+            <span class="kw">return</span> next_item
+
+<span class="kw">def</span> buy_next_item(top, level):
+    logging.debug(<span class="str">"buy_next_item {0} and level {1}"</span>.format(top, level))
+    <span class="skw">click</span>(top)
+    shop = <span class="skw">capture</span>(top.getX(), top.getY() + <span class="dig">100</span>, <span class="dig">20</span>, <span class="dig">20</span>)
+    logging.debug(<span class="str">"shop {0}"</span>.format(shop))
+    <span class="kw">print</span> shop
+
+    <span class="skw">sleep</span>(SLEEP_ON_BUY)
+    <span class="skw">click</span>(shop)
+    <span class="skw">sleep</span>(SLEEP_ON_BUY)
+    <span class="skw">click</span>(<img src="buy.png" />)
+    next_item = get_netx_item(level)
+    <span class="kw">if</span> next_item:
+        <span class="kw">print</span> <span class="str">"click on:"</span>
+        <span class="kw">print</span> next_item
+        <span class="skw">click</span>(next_item)
+    <span class="skw">sleep</span>(SLEEP_ON_BUY)
+    <span class="skw">click</span>(<img src="close.png" />)
+
+
+<span class="kw">def</span> buyitems(args):
+    logging.debug(<span class="str">"buy_next_item level {0}"</span>.format(args.level))
+    <span class="skw">sleep</span>(SLEEP_ON_LOAD)
+    i = <span class="dig">0</span>
+    <span class="kw">while</span> i &lt; args.count:
+        top = check_is_item_redy()
+        <span class="kw">if</span> top :
+            logging.debug(<span class="str">"buy item #{0}"</span>.format(i))
+            buy_next_item(top, args.level)
+            i = i +<span class="dig">1</span>
+        <span class="skw">sleep</span>(get_sleep_time(args.level))
+
+<span class="cmt">#------------------------------------------------------------------------------------------------------------------------</span>
+<span class="kw">def</span> sentpresents(args):
+    <span class="kw">print</span> <span class="str">"Not implemented yet."</span>
+
+<span class="cmt">#------------------------------------------------------------------------------------------------------------------------</span>
+<span class="kw">def</span> get_parser():
+    parser = argparse.ArgumentParser(description=<span class="str">'Automation of the game `vk.civilwar`'</span>, epilog=(
+    <span class="str">'Home page: &lt;https://github.com/banadiga/vk.civilwar.sikuli/&gt;\n'</span>
+    <span class="str">'Documentation pade: &lt;https://github.com/banadiga/vk.civilwar.sikuli/README.md&gt;\n'</span>
+    <span class="str">'Report bugs to &lt;banadiga@users.noreply.github.com&gt; or &lt;https://github.com/banadiga/vk.civilwar.sikuli/issues&gt;\n'</span>
+    ), formatter_class=RawTextHelpFormatter)
+    subparsers = parser.add_subparsers(dest=<span class="str">'run'</span>, help=<span class="str">'Sub command help:'</span>)
+    parser_sent_presents = subparsers.add_parser(<span class="str">'sent-presents'</span>,
+        help=<span class="str">'Sent presents to fiends.'</span>)
+    parser_sent_presents.set_defaults(func=sentpresents)
+    parser_buy_items = subparsers.add_parser(<span class="str">'buy-items'</span>,
+        help=<span class="str">'Buy items in shop.'</span>)
+    parser_buy_items.add_argument(<span class="str">'-c'</span>, <span class="str">'--count'</span>,
+        <span class="skw">type</span>=int, default=<span class="dig">100</span>,
+        help=<span class="str">'amount of items. Default is 100.'</span>)
+    parser_buy_items.add_argument(<span class="str">'-l'</span>, <span class="str">'--level'</span>,
+        <span class="skw">type</span>=int, default=<span class="dig">0</span>, choices=xrange(<span class="dig">0</span>, <span class="dig">6</span>),
+        help=<span class="str">'level of item. Default is 0.'</span>)
+    parser_buy_items.set_defaults(func=buyitems)
+
+    parser.add_argument(<span class="str">'--version'</span>, action=<span class="str">'version'</span>, version=<span class="str">'%(prog)s 2.1'</span>)
+
+    parser.add_argument(<span class="str">'-v'</span>, <span class="str">'--verbose'</span>,
+        action=<span class="str">"store_const"</span>, dest=<span class="str">"Set log level to INFO."</span>, const=logging.INFO,
+        help=<span class="str">"increase output verbosity."</span>)
+    parser.add_argument(<span class="str">'-d'</span>, <span class="str">'--debug'</span>,
+        action=<span class="str">"store_const"</span>, dest=<span class="str">"Set log level to DEBUG."</span>, const=logging.DEBUG, default=logging.WARNING,
+        help=<span class="str">"print lots of debugging statements."</span>)
+    <span class="kw">return</span> parser
+
+<span class="cmt">#------------------------------------------------------------------------------------------------------------------------</span>
+<span class="kw">def</span> main(args):
+    logging.debug(<span class="str">"Parser{0}"</span>.format(args))
+    logging.info(<span class="str">"Run command `{0}`"</span>.format(args.run))
+    args.func(args)
+
+args = get_parser().parse_args()
+logging.basicConfig(level=args.loglevel)
+<span class="kw">if</span> __name__ == <span class="str">'__main__'</span>:
+    main(args)
+</pre>
+</body>
+</html>
