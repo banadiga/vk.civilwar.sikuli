@@ -71,43 +71,59 @@
 </div>
 <pre class="sikuli-code">
 <span class="kw">import</span> argparse
+<span class="kw">import</span> java.awt.Robot <span class="kw">as</span> JRobot
 <span class="kw">from</span> argparse <span class="kw">import</span> RawTextHelpFormatter
 <span class="kw">import</span> logging
 
 SLEEP_ON_LOAD = <span class="dig">1</span>
 LONG_SLEEP = <span class="dig">10</span>
 SLEEP_ON_BUY = <span class="dig">1</span>
+SIMILAR_FOR_NEW = <span class="dig">0.8</span>
+SIMILAR_FOR_DONE = <span class="dig">0.58</span>
 
 LIST_OF_DONE_ITEM = [
-<img src="done_11.png" />, <img src="done_21.png" />, <img src="done_31.png" />, <img src="done_41.png" />, <img src="done_15.png" />,
-<img src="done_12.png" />, <img src="done_22.png" />, <img src="done_32.png" />, <img src="done_42.png" />, <img src="done_25.png" />,
-<img src="done_13.png" />, <img src="done_23.png" />, <img src="done_33.png" />, <img src="done_43.png" />, <img src="done_35.png" />,
-<img src="done_14.png" />, <img src="done_24.png" />, <img src="done_34.png" />, <img src="done_44.png" />, <img src="done_45.png" />,
+    <img src="done_11.png" />, <img src="done_21.png" />, <img src="done_31.png" />, <img src="done_41.png" />, <img src="done_15.png" />,
+    <img src="done_12.png" />, <img src="done_22.png" />, <img src="done_32.png" />, <img src="done_42.png" />, <img src="done_25.png" />,
+    <img src="done_13.png" />, <img src="done_23.png" />, <img src="done_33.png" />, <img src="done_43.png" />, <img src="done_35.png" />,
+    <img src="done_14.png" />, <img src="done_24.png" />, <img src="done_34.png" />, <img src="done_44.png" />, <img src="done_45.png" />,
 ]
 
 LIST_OF_NEXT = [
-[ <img src="item_11.png" />, <img src="item_21.png" />, <img src="item_31.png" />, <img src="item_41.png" />, <img src="item_15.png" />],
-[ <img src="item_12.png" />, <img src="item_22.png" />, <img src="item_32.png" />, <img src="item_42.png" />, <img src="item_25.png" />],
-[ <img src="item_13.png" />, <img src="item_23.png" />, <img src="item_33.png" />, <img src="item_43.png" />, <img src="item_35.png" />],
-[ <img src="item_14.png" />, <img src="item_24.png" />, <img src="item_34.png" />, <img src="item_44.png" />, <img src="item_45.png" />],
+    [<img src="item_11.png" />, <img src="item_21.png" />, <img src="item_31.png" />, <img src="item_41.png" />],
+    [<img src="item_12.png" />, <img src="item_22.png" />, <img src="item_32.png" />, <img src="item_42.png" />],
+    [<img src="item_13.png" />, <img src="item_23.png" />, <img src="item_33.png" />, <img src="item_43.png" />],
+    [<img src="item_14.png" />, <img src="item_24.png" />, <img src="item_34.png" />, <img src="item_44.png" />],
+    [<img src="item_15.png" />, <img src="item_25.png" />, <img src="item_35.png" />, <img src="item_45.png" />]
 ]
 
+<span class="cmt"># ------------------------------------------------------------------------------------------------------------------------</span>
+<span class="cmt"># buy items</span>
+<span class="cmt"># ------------------------------------------------------------------------------------------------------------------------</span>
 <span class="kw">def</span> get_sleep_time(level):
     <span class="kw">return</span> SLEEP_ON_LOAD + LONG_SLEEP * level + SLEEP_ON_BUY * level
 
-<span class="kw">def</span> check_is_item_redy() :
+
+<span class="kw">def</span> check_is_item_redy():
     <span class="kw">for</span> i, v <span class="kw">in</span> enumerate(LIST_OF_DONE_ITEM):
+        pattern = Pattern(v)
+        pattern.similar(SIMILAR_FOR_DONE)
         top = exists(v)
         <span class="kw">if</span> top:
+            <span class="kw">print</span> v
             <span class="kw">print</span> top
             <span class="kw">return</span> top
 
+
 <span class="kw">def</span> get_netx_item(level):
-    <span class="kw">for</span> j, q <span class="kw">in</span> enumerate(LIST_OF_NEXT[level]):
-        next_item = exists(q)
+    <span class="kw">for</span> j, q <span class="kw">in</span> enumerate(LIST_OF_NEXT[level - <span class="dig">1</span>]):
+        pattern = Pattern(q)
+        pattern.similar(SIMILAR_FOR_NEW)
+        next_item = exists(pattern)
         <span class="kw">if</span> next_item:
+            <span class="kw">print</span> q
             <span class="kw">print</span> next_item
             <span class="kw">return</span> next_item
+
 
 <span class="kw">def</span> buy_next_item(top, level):
     logging.debug(<span class="str">"buy_next_item {0} and level {1}"</span>.format(top, level))
@@ -120,67 +136,122 @@ LIST_OF_NEXT = [
     <span class="skw">click</span>(shop)
     <span class="skw">sleep</span>(SLEEP_ON_BUY)
     <span class="skw">click</span>(<img src="buy.png" />)
+    <span class="skw">sleep</span>(SLEEP_ON_BUY)
+    x = <span class="skw">find</span>(<img src="close.png" />)
+    mouseMove(x)
     next_item = get_netx_item(level)
     <span class="kw">if</span> next_item:
         <span class="kw">print</span> <span class="str">"click on:"</span>
         <span class="kw">print</span> next_item
         <span class="skw">click</span>(next_item)
-    <span class="skw">sleep</span>(SLEEP_ON_BUY)
-    <span class="skw">click</span>(<img src="close.png" />)
+        <span class="skw">sleep</span>(SLEEP_ON_BUY)
+    <span class="skw">click</span>(x)
 
 
 <span class="kw">def</span> buyitems(args):
     logging.debug(<span class="str">"buy_next_item level {0}"</span>.format(args.level))
-    <span class="skw">sleep</span>(SLEEP_ON_LOAD)
     i = <span class="dig">0</span>
     <span class="kw">while</span> i &lt; args.count:
+        <span class="skw">sleep</span>(SLEEP_ON_LOAD)
         top = check_is_item_redy()
-        <span class="kw">if</span> top :
+        <span class="kw">if</span> top:
             logging.debug(<span class="str">"buy item #{0}"</span>.format(i))
             buy_next_item(top, args.level)
-            i = i +<span class="dig">1</span>
-        <span class="skw">sleep</span>(get_sleep_time(args.level))
+            i = i + <span class="dig">1</span>
 
-<span class="cmt">#------------------------------------------------------------------------------------------------------------------------</span>
+<span class="cmt"># ------------------------------------------------------------------------------------------------------------------------</span>
+<span class="cmt"># sent presents</span>
+<span class="cmt"># ------------------------------------------------------------------------------------------------------------------------</span>
+<span class="kw">def</span> is_last():
+    p = <span class="skw">find</span>(<img src="previous.png" />).getCenter()
+    c = JRobot().getPixelColor(p.x, p.y)
+    crgb = (c.getRed(), c.getGreen(), c.getBlue())
+    gris = (<span class="dig">183</span>, <span class="dig">123</span>, <span class="dig">35</span>)
+    <span class="kw">return</span> crgb == gris
+
+
+<span class="kw">def</span> send_present_to(person):
+    <span class="skw">sleep</span>(SLEEP_ON_LOAD)
+    <span class="skw">click</span>(person)
+
+    <span class="skw">sleep</span>(SLEEP_ON_LOAD)
+    <span class="kw">if</span> exists(<img src="present.png" />):
+        <span class="skw">click</span>(<img src="present.png" />)
+        <span class="skw">sleep</span>(SLEEP_ON_LOAD)
+
+        check = <span class="skw">find</span>(<img src="checked.png" />)
+        <span class="skw">click</span>(check)
+        present = <span class="skw">capture</span>(check.getX() + <span class="dig">50</span>, check.getY() - <span class="dig">50</span>, <span class="dig">20</span>, <span class="dig">20</span>)
+
+        <span class="skw">sleep</span>(SLEEP_ON_LOAD)
+        <span class="skw">click</span>(present)
+
+        <span class="skw">sleep</span>(SLEEP_ON_LOAD)
+        <span class="skw">click</span>(<img src="close.png" />)
+
+
+<span class="kw">def</span> send_present_to_all_in_scrin(top):
+    step = <span class="dig">75</span>
+    y = top.getY() - <span class="dig">25</span>
+    x = top.getX() + <span class="dig">6</span> * step + <span class="dig">10</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">0</span>, <span class="dig">6</span>):
+        person = <span class="skw">capture</span>(x - i * step, y, <span class="dig">50</span>, <span class="dig">50</span>)
+        send_present_to(person)
+
+
 <span class="kw">def</span> sentpresents(args):
-    <span class="kw">print</span> <span class="str">"Not implemented yet."</span>
+    <span class="skw">sleep</span>(SLEEP_ON_LOAD)
+    top = <span class="skw">find</span>(<img src="users.png" />).getCenter()
+    <span class="kw">if</span> <span class="kw">not</span> top:
+        logging.info(<span class="str">"Open list of users"</span>)
+        <span class="kw">return</span>
+    <span class="kw">while</span> True:
+        send_present_to_all_in_scrin(top)
+        <span class="kw">if</span> is_last():
+            <span class="kw">break</span>
+        <span class="skw">click</span>(<img src="previous.png" />)
+        <span class="skw">sleep</span>(SLEEP_ON_LOAD)
 
-<span class="cmt">#------------------------------------------------------------------------------------------------------------------------</span>
+
+<span class="cmt"># ------------------------------------------------------------------------------------------------------------------------</span>
 <span class="kw">def</span> get_parser():
     parser = argparse.ArgumentParser(description=<span class="str">'Automation of the game `vk.civilwar`'</span>, epilog=(
-    <span class="str">'Home page: &lt;https://github.com/banadiga/vk.civilwar.sikuli/&gt;\n'</span>
-    <span class="str">'Documentation pade: &lt;https://github.com/banadiga/vk.civilwar.sikuli/blob/master/README.md&gt;\n'</span>
-    <span class="str">'Report bugs to &lt;banadiga@users.noreply.github.com&gt; or &lt;https://github.com/banadiga/vk.civilwar.sikuli/issues&gt;\n'</span>
+        <span class="str">'Home page: &lt;https://github.com/banadiga/vk.civilwar.sikuli/&gt;\n'</span>
+        <span class="str">'Documentation pade: &lt;https://github.com/banadiga/vk.civilwar.sikuli/blob/master/README.md&gt;\n'</span>
+        <span class="str">'Report bugs to &lt;banadiga@users.noreply.github.com&gt; or &lt;https://github.com/banadiga/vk.civilwar.sikuli/issues&gt;\n'</span>
     ), formatter_class=RawTextHelpFormatter)
     subparsers = parser.add_subparsers(dest=<span class="str">'run'</span>, help=<span class="str">'Sub command help:'</span>)
     parser_sent_presents = subparsers.add_parser(<span class="str">'sent-presents'</span>,
-        help=<span class="str">'Sent presents to fiends.'</span>)
+                                                 help=<span class="str">'Sent presents to fiends.'</span>)
     parser_sent_presents.set_defaults(func=sentpresents)
     parser_buy_items = subparsers.add_parser(<span class="str">'buy-items'</span>,
-        help=<span class="str">'Buy items in shop.'</span>)
+                                             help=<span class="str">'Buy items in shop.'</span>)
     parser_buy_items.add_argument(<span class="str">'-c'</span>, <span class="str">'--count'</span>,
-        <span class="skw">type</span>=int, default=<span class="dig">100</span>,
-        help=<span class="str">'amount of items. Default is 100.'</span>)
+                                  <span class="skw">type</span>=int, default=<span class="dig">100</span>,
+                                  help=<span class="str">'amount of items. Default is 100.'</span>)
     parser_buy_items.add_argument(<span class="str">'-l'</span>, <span class="str">'--level'</span>,
-        <span class="skw">type</span>=int, default=<span class="dig">0</span>, choices=xrange(<span class="dig">0</span>, <span class="dig">6</span>),
-        help=<span class="str">'level of item. Default is 0.'</span>)
+                                  <span class="skw">type</span>=int, default=<span class="dig">1</span>, choices=xrange(<span class="dig">1</span>, <span class="dig">6</span>),
+                                  help=<span class="str">'level of item. Default is 0.'</span>)
     parser_buy_items.set_defaults(func=buyitems)
 
-    parser.add_argument(<span class="str">'--version'</span>, action=<span class="str">'version'</span>, version=<span class="str">'%(prog)s 2.1'</span>)
+    parser.add_argument(<span class="str">'--version'</span>, action=<span class="str">'version'</span>, version=<span class="str">'%(prog)s 2.2'</span>)
 
     parser.add_argument(<span class="str">'-v'</span>, <span class="str">'--verbose'</span>,
-        action=<span class="str">"store_const"</span>, dest=<span class="str">"Set log level to INFO."</span>, const=logging.INFO,
-        help=<span class="str">"increase output verbosity."</span>)
+                        action=<span class="str">"store_const"</span>, dest=<span class="str">"loglevel"</span>, const=logging.INFO,
+                        help=<span class="str">"increase output verbosity."</span>)
     parser.add_argument(<span class="str">'-d'</span>, <span class="str">'--debug'</span>,
-        action=<span class="str">"store_const"</span>, dest=<span class="str">"Set log level to DEBUG."</span>, const=logging.DEBUG, default=logging.WARNING,
-        help=<span class="str">"print lots of debugging statements."</span>)
+                        action=<span class="str">"store_const"</span>, dest=<span class="str">"loglevel"</span>, const=logging.DEBUG,
+                        default=logging.WARNING,
+                        help=<span class="str">"print lots of debugging statements."</span>)
     <span class="kw">return</span> parser
 
-<span class="cmt">#------------------------------------------------------------------------------------------------------------------------</span>
+
+<span class="cmt"># ------------------------------------------------------------------------------------------------------------------------</span>
 <span class="kw">def</span> main(args):
     logging.debug(<span class="str">"Parser{0}"</span>.format(args))
     logging.info(<span class="str">"Run command `{0}`"</span>.format(args.run))
     args.func(args)
+
 
 args = get_parser().parse_args()
 logging.basicConfig(level=args.loglevel)

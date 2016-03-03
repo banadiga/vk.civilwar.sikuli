@@ -4,7 +4,7 @@ Automation of the game `vk.civilwar`
 Functionality
 ----
 * [x] Buy items in shop
-* [ ] Sent presents to fiends.
+* [x] Sent presents to fiends.
 
 
 Install
